@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Add User Form</title>
+        <style>
+            body {
+                background-color: #000;
+                color: #fff;
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+            }
+
+            form {
+                max-width: 400px;
+                padding: 20px;
+                background-color: rgba(0, 0, 0, 0.7);
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            }
+
+            h2 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 10px;
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            input[type="text"],
+            input[type="date"],
+            input[type="file"] {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 20px;
+                background-color: #333;
+                border: none;
+                border-radius: 5px;
+                color: #fff;
+            }
+
+            input[type="text"]:focus,
+            input[type="date"]:focus,
+            input[type="file"]:focus {
+                outline: none;
+                box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            }
+
+            input[type="file"] {
+                padding: 5px;
+            }
+
+            input[type="submit"] {
+                background-color: #14547256;
+                color: #fff;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+            input[type="submit"]:hover {
+                background-color: #0056b3;
+            }
+
+            @media (max-width: 768px) {
+                form {
+                    max-width: 90%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <form method="post">
+            <h2>Add new user</h2>
+            <label for="new_user">First Name</label>
+            <input type="text" id="new_user" name="user" required />
+
+            <label for="dob">Date of Birth</label>
+            <input type="date" id="dob" name="dob" required />
+
+            <label for="file">Photo</label>
+            <input type="file" id="file" accept="image/*" />
+
+            <input type="submit" value="Submit" />
+        </form>
+    </body>
+</html>

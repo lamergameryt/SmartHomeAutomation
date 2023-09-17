@@ -1,0 +1,13 @@
+overrides:
+  - files: ["*.java"]
+    options:
+      printWidth: 110
+      tabWidth: 4
+      useTabs: false
+  - files: ["*.css", "*.js", "*.html"]
+    options:
+      printWidth: 110
+      tabWidth: 4
+      useTabs: false
+plugins:
+  - /usr/lib/node_modules/prettier-plugin-java/dist/src/index.js

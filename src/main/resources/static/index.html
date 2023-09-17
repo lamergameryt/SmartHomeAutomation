@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, height=device-height, user-scalable=0, initial-scale=1, minimum-scale=1"
+        />
+        <script src="assets/libs/fontawesome-31226f4787.js" crossorigin="anonymous"></script>
+        <script src="assets/libs/sweetalert.min.js"></script>
+        <link href="assets/libs/bootstrap.min.css" rel="stylesheet" />
+        <script src="assets/libs/bootstrap.bundle.min.js"></script>
+        <link href="assets/css/style.css" rel="stylesheet" />
+        <title>Login Page</title>
+    </head>
+    <body data-bs-theme="dark">
+        <div>
+            <img src="assets/img/loginlogo.webp" alt="Avatar" />
+        </div>
+        <div>
+            <form id="login-form">
+                <i class="fa-solid fa-user"></i>
+                <label>
+                    <input
+                        id="username"
+                        type="text"
+                        name="username"
+                        placeholder="Username"
+                        required
+                    /> </label
+                ><br />
+                <i class="fa-solid fa-lock"></i>
+                <label>
+                    <input
+                        id="password"
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        required
+                    /> </label
+                ><br /><br />
+                <button type="submit">Login Now</button><br /><br />
+            </form>
+        </div>
+        <script>
+            const invalidLogin = () => swal("Oops...", "Invalid username or password entered!", "error");
+
+            document.addEventListener("contextmenu", (event) => event.preventDefault());
+            document.getElementById("login-form").addEventListener("submit", async (e) => {
+                e.preventDefault();
+                await login(
+                    document.getElementById("username").value,
+                    document.getElementById("password").value,
+                );
+            });
+        </script>
+    </body>
+</html>
