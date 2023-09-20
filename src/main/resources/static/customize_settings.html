@@ -136,14 +136,14 @@
                 <li>
                     <div><img src="assets/img/fan.webp" alt="Fan" /></div>
                     <h4>Fan</h4>
-                    <label for="quantity"></label
-                    ><input type="number" id="quantity" name="quantity" min="1" max="5" />
+                    <label for="speed"></label>
+                    <input type="number" id="speed" name="speed" min="1" max="5" />
                 </li>
                 <li>
                     <div><img src="assets/img/light_clip.webp" alt="Light" /></div>
                     <h4>Light</h4>
                     <label class="switch">
-                        <input type="checkbox" />
+                        <input id="light" type="checkbox" />
                         <span class="slider"></span>
                     </label>
                 </li>
@@ -151,14 +151,30 @@
                     <div><img src="assets/img/speaker.webp" alt="Speaker" /></div>
                     <h4>Speaker</h4>
                     <label>
-                        <input type="range" />
+                        <input id="speaker" type="range" min="0" max="100" />
                     </label>
                 </li>
             </ul>
         </div>
 
         <div class="button">
-            <button type="button">Done</button>
+            <button type="button" onclick="saveSettings();">Done</button>
         </div>
+
+        <script>
+            function saveSettings() {
+                let fanspeed = document.getElementById("speed").value;
+                let light = document.getElementById("light").checked;
+                let speaker = document.getElementById("speaker").value;
+
+                let data = {
+                    fanspeed: fanspeed,
+                    light: light,
+                    speaker: speaker,
+                };
+
+                update_settings(data);
+            }
+        </script>
     </body>
 </html>

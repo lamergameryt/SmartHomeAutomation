@@ -7,7 +7,7 @@ import org.json.JSONArray;
 public class LoginCallback extends CustomCallback {
 
     public LoginCallback() {
-        this.name = "login";
+        super.name = "login";
     }
 
     @Override

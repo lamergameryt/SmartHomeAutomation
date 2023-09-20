@@ -21,4 +21,4 @@ Before installation ensure you meet all the [required prerequisites](#prerequisi
 - Copy or rename the `mysql.json.example` file to `mysql.json` in the resources folder at `src/main/resources`
 - Modify the setting present in the `mysql.json` file and save the changes.
 - Build the project by using `mvn clean package` and cd into the target directory.
-- Run the built project by executing `java -jar target/facedetectionbackend-VERSION.jar`
+- Run the built project by executing `java -jar target/fdwebview-VERSION.jar`

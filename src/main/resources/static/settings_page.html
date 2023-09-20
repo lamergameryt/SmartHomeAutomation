@@ -72,103 +72,34 @@
     </head>
     <body>
         <h1>Members</h1>
-
-        <ul class="user-list">
-            <li class="user">
-                <img src="assets/img/user.webp" alt="User" />
-                <div style="color: aliceblue">Siddhant Ghodke</div>
-                <a href="view_settings.html">
-                    <button class="btn btn-primary" style="background-color: cadetblue; border: 0">
-                        View Settings
-                    </button>
-                </a>
-                <a href="customize_settings.html">
-                    <button
-                        class="btn btn-secondary"
-                        onclick="alert('Do you want to customize your settings?')"
-                    >
-                        Customize Settings
-                    </button>
-                </a>
-            </li>
-
-            <li class="user">
-                <img src="assets/img/user.webp" alt="User" />
-                <div style="color: aliceblue">Nandini Gulhane</div>
-                <a href="view_settings.html">
-                    <button class="btn btn-primary" style="background-color: cadetblue; border: 0">
-                        View Settings
-                    </button>
-                </a>
-                <a href="customize_settings.html">
-                    <button
-                        class="btn btn-secondary"
-                        onclick="alert('Do you want to customize your settings?')"
-                    >
-                        Customize Settings
-                    </button>
-                </a>
-            </li>
-
-            <li class="user">
-                <img src="assets/img/user.webp" alt="User" />
-                <div style="color: aliceblue">Harsh Patil</div>
-                <a href="view_settings.html">
-                    <button class="btn btn-primary" style="background-color: cadetblue; border: 0">
-                        View Settings
-                    </button>
-                </a>
-                <a href="customize_settings.html">
-                    <button
-                        class="btn btn-secondary"
-                        onclick="alert('Do you want to customize your settings?')"
-                    >
-                        Customize Settings
-                    </button>
-                </a>
-            </li>
-
-            <li class="user">
-                <img src="assets/img/user.webp" alt="User" />
-                <div style="color: aliceblue">Gaurav Hote</div>
-                <a href="view_settings.html">
-                    <button class="btn btn-primary" style="background-color: cadetblue; border: 0">
-                        View Settings
-                    </button>
-                </a>
-                <a href="customize_settings.html">
-                    <button
-                        class="btn btn-secondary"
-                        onclick="alert('Do you want to customize your settings?')"
-                    >
-                        Customize Settings
-                    </button>
-                </a>
-            </li>
-
-            <li class="user">
-                <img src="assets/img/user.webp" alt="User" />
-                <div style="color: aliceblue">Ishita Ramdasi</div>
-                <a href="view_settings.html">
-                    <button class="btn btn-primary" style="background-color: cadetblue; border: 0">
-                        View Settings
-                    </button>
-                </a>
-                <a href="customize_settings.html">
-                    <button
-                        class="btn btn-secondary"
-                        onclick="alert('Do you want to customize your settings?')"
-                    >
-                        Customize Settings
-                    </button>
-                </a>
-            </li>
-        </ul>
-
+        <ul id="users" class="user-list"></ul>
         <div class="icon-container">
             <div class="icon">
                 <a href="add_user.html"><i class="fas fa-plus" style="font-size: 36px"></i></a>
             </div>
         </div>
+        <script>
+            const userTemplate = `
+<li class="user">
+    <img src="assets/img/user.webp" alt="User" />
+    <div style="color: aliceblue">{{user_name}}</div>
+    <a href="view_settings.html">
+        <button class="btn btn-primary" style="background-color: cadetblue; border: 0">View Settings</button>
+    </a>
+    <a href="customize_settings.html">
+        <button class="btn btn-secondary" onclick="customize_settings({{user_id}})">Customize Settings</button>
+    </a>
+</li>
+            `.trim();
+
+            function addSetting(userData) {
+                let users = document.getElementById("users");
+                users.innerHTML +=
+                    "\n" +
+                    userTemplate.replace("{{user_name}}", userData.name).replace("{{user_id}}", userData.id);
+            }
+
+            load_users();
+        </script>
     </body>
 </html>
