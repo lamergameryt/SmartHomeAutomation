@@ -19,10 +19,9 @@ input[type="password"] {
 img {
     text-align: center;
     border-radius: 100%;
-    width: 20%;
+    max-width: 25%;
     margin: 20px 0 12px 0;
     position: relative;
-    /*size: 100px;*/
 }
 
 button {
@@ -41,4 +40,11 @@ button:hover {
 
 a:hover {
     color: darkseagreen;
+}
+
+body {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    min-height: 85vh;
 }

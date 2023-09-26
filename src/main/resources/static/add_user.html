@@ -1,13 +1,19 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Add User Form</title>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, height=device-height, user-scalable=0, initial-scale=1, minimum-scale=1"
+        />
+        <script src="assets/libs/theme.js"></script>
+
+        <link href="assets/libs/bootstrap.min.css" rel="stylesheet" />
+        <script src="assets/libs/bootstrap.bundle.min.js"></script>
+        <script src="assets/libs/fontawesome-31226f4787.js"></script>
         <style>
             body {
-                background-color: #000;
-                color: #fff;
                 font-family: Arial, sans-serif;
                 margin: 0;
                 padding: 0;
@@ -17,12 +23,25 @@
                 min-height: 100vh;
             }
 
+            .container {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
             form {
                 max-width: 400px;
                 padding: 20px;
-                background-color: rgba(0, 0, 0, 0.7);
                 border-radius: 10px;
+                margin-bottom: 20px;
+            }
+
+            [data-bs-theme="dark"] form {
                 box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            }
+
+            [data-bs-theme="light"] form {
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             }
 
             h2 {
@@ -43,17 +62,20 @@
                 width: 100%;
                 padding: 10px;
                 margin-bottom: 20px;
-                background-color: #333;
-                border: none;
-                border-radius: 5px;
-                color: #fff;
             }
 
-            input[type="text"]:focus,
+            [data-bs-theme="dark"] input[type="text"]:focus,
             input[type="date"]:focus,
             input[type="file"]:focus {
                 outline: none;
                 box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            }
+
+            [data-bs-theme="light"] input[type="text"]:focus,
+            input[type="date"]:focus,
+            input[type="file"]:focus {
+                outline: none;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
             }
 
             input[type="file"] {
@@ -74,6 +96,22 @@
                 background-color: #0056b3;
             }
 
+            .back-btn {
+                transition: transform 0.2s ease-in-out;
+                position: absolute;
+                width: auto;
+                padding: 10px;
+                left: 20px;
+                top: 20px;
+                border: 10px;
+                box-shadow: 0 0;
+                border-radius: 0;
+            }
+
+            .back-btn:active {
+                transform: rotate(180deg);
+            }
+
             @media (max-width: 768px) {
                 form {
                     max-width: 90%;
@@ -81,19 +119,28 @@
             }
         </style>
     </head>
-    <body>
-        <form method="post">
-            <h2>Add new user</h2>
-            <label for="new_user">First Name</label>
-            <input type="text" id="new_user" name="user" required />
+    <body data-bs-theme="dark">
+        <div class="container align-items-center justify-content-center">
+            <a href="javascript:history.back()" class="back-btn btn">
+                <i style="font-size: 24px" class="fas">&#xf04a;</i>
+            </a>
+            <form method="post">
+                <h2>Add new user</h2>
+                <label for="new_user">First Name</label>
+                <input type="text" id="new_user" name="user" required />
 
-            <label for="dob">Date of Birth</label>
-            <input type="date" id="dob" name="dob" required />
+                <label for="dob">Date of Birth</label>
+                <input type="date" id="dob" name="dob" required />
 
-            <label for="file">Photo</label>
-            <input type="file" id="file" accept="image/*" />
+                <label for="file">Photo</label>
+                <input type="file" id="file" accept="image/*" />
 
-            <input type="submit" value="Submit" />
-        </form>
+                <input type="submit" value="Submit" />
+            </form>
+        </div>
+        <script>
+            createToggleButton();
+            loadTheme();
+        </script>
     </body>
 </html>

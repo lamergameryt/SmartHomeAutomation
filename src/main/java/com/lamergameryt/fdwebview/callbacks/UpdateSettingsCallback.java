@@ -12,6 +12,6 @@ public class UpdateSettingsCallback extends CustomCallback {
     @Override
     public void executeCallback(JSONArray args) {
         // TODO: Handle settings callback by updating database.
-        for (int i = 0; i < args.length(); i++) System.out.println(args);
+        System.out.println(args);
     }
 }

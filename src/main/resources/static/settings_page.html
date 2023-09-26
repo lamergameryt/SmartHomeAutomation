@@ -1,16 +1,19 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Settings Page</title>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, height=device-height, user-scalable=0, initial-scale=1, minimum-scale=1"
+        />
+        <script src="assets/libs/theme.js"></script>
+
         <link rel="stylesheet" href="assets/libs/bootstrap.min.css" />
         <script src="assets/libs/bootstrap.bundle.min.js"></script>
         <script src="assets/libs/fontawesome-31226f4787.js" crossorigin="anonymous"></script>
         <style>
             body {
-                background-color: #121212;
-                color: #fff;
                 margin: 0;
                 font-family: Arial, sans-serif;
             }
@@ -21,7 +24,6 @@
             }
 
             .icon-container {
-                position: relative;
                 width: 100px;
                 height: 100px;
                 transform: translateY(-50%);
@@ -32,7 +34,6 @@
 
             .icon {
                 background-color: cadetblue;
-                color: #fff;
                 border-radius: 50%;
                 padding: 10px;
                 margin-right: 20px;
@@ -51,7 +52,14 @@
                 padding: 20px;
                 margin: 10px;
                 text-align: center;
+            }
+
+            [data-bs-theme="dark"] .user {
                 box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+            }
+
+            [data-bs-theme="light"] .user {
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
             }
 
             .user img {
@@ -63,31 +71,50 @@
 
             .user button {
                 margin-top: 10px;
+                background-color: cadetblue;
+                border: 0;
+                color: white;
+                padding: 8px;
+                text-align: center;
+                border-radius: 5px;
             }
+
+            .user button:hover {
+                background-color: darkcyan;
+            }
+
+            .user button :active {
+                background-color: cadetblue;
+                box-shadow: 0 0;
+            }
+
             a {
                 text-decoration: none;
-                color: aliceblue;
             }
         </style>
     </head>
-    <body>
-        <h1>Members</h1>
-        <ul id="users" class="user-list"></ul>
-        <div class="icon-container">
-            <div class="icon">
-                <a href="add_user.html"><i class="fas fa-plus" style="font-size: 36px"></i></a>
+    <body data-bs-theme="dark">
+        <div class="container">
+            <h1>Members</h1>
+            <ul id="users" class="user-list"></ul>
+            <div class="icon-container">
+                <div class="icon">
+                    <a href="add_user.html"
+                        ><i class="fas fa-plus" style="color: white; font-size: 36px"></i
+                    ></a>
+                </div>
             </div>
         </div>
         <script>
+            createToggleButton();
+            loadTheme();
+
             const userTemplate = `
 <li class="user">
     <img src="assets/img/user.webp" alt="User" />
-    <div style="color: aliceblue">{{user_name}}</div>
-    <a href="view_settings.html">
-        <button class="btn btn-primary" style="background-color: cadetblue; border: 0">View Settings</button>
-    </a>
+    <div>{{user_name}}</div>
     <a href="customize_settings.html">
-        <button class="btn btn-secondary" onclick="customize_settings({{user_id}})">Customize Settings</button>
+        <button onclick="customize_settings({{user_id}})">Customize Settings</button>
     </a>
 </li>
             `.trim();
