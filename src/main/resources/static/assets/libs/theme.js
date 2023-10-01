@@ -1,4 +1,6 @@
 function loadTheme() {
+    document.addEventListener("contextmenu", (event) => event.preventDefault());
+
     let darkTheme = localStorage.getItem("data-bs-theme");
     if (darkTheme === null) darkTheme = "dark";
 

@@ -1,4 +1,4 @@
-package com.lamergameryt.fdwebview;
+package com.lamergameryt.fdwebview.server;
 
 import fi.iki.elonen.NanoHTTPD;
 import java.io.IOException;

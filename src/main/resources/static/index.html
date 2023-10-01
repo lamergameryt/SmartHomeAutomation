@@ -50,7 +50,6 @@
         <script>
             createToggleButton();
             loadTheme();
-            document.addEventListener("contextmenu", (event) => event.preventDefault());
 
             const invalidLogin = () => swal("Oops...", "Invalid username or password entered!", "error");
             document.getElementById("login-form").addEventListener("submit", async (e) => {

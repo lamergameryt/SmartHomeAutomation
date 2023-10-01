@@ -2,18 +2,20 @@ package com.lamergameryt.fdwebview;
 
 import ca.weblite.webview.WebView;
 import com.lamergameryt.fdwebview.callbacks.CustomCallback;
+import com.lamergameryt.fdwebview.mysql.DatabaseHandler;
+import com.lamergameryt.fdwebview.server.NanoServer;
 import fi.iki.elonen.NanoHTTPD;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import org.json.JSONArray;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MainView {
 
-    private static WebView webView;
+    private static DatabaseHandler handler;
     private static NanoServer server;
+    private static WebView webView;
     private static final Logger logger = LoggerFactory.getLogger(MainView.class);
 
     public static void main(String[] args) {
@@ -26,19 +28,28 @@ public class MainView {
         }
 
         logger.info(getBaseUrl());
-        webView =
-            new WebView()
-                .url(getBaseUrl() + "/index.html")
-                .size(800, 550)
-                .resizable(true)
-                .title("Smart Home Automation");
+
+        MySQLConfig config = new MySQLConfig("mysql.json");
+        handler = new DatabaseHandler(config);
+
+        webView = setupWebview();
+        webView.show(false);
+    }
+
+    private static WebView setupWebview() {
+        WebView webView = new WebView()
+            .url(getBaseUrl() + "/index.html")
+            .size(800, 550)
+            .resizable(true)
+            .title("Smart Home Automation");
 
         Reflections reflections = new Reflections("com.lamergameryt.fdwebview.callbacks");
         reflections
-            .getSubTypesOf(CustomCallback.class)
+            .getClasses()
             .forEach(clazz -> {
+                if (!clazz.getSuperclass().equals(CustomCallback.class)) return;
                 try {
-                    CustomCallback callback = clazz.getDeclaredConstructor().newInstance();
+                    CustomCallback callback = (CustomCallback) clazz.getDeclaredConstructor().newInstance();
                     if (callback.getName() == null) {
                         logger.error("Callback name not set, skipping callback: " + clazz.getName());
                         return;
@@ -54,11 +65,15 @@ public class MainView {
                     | InvocationTargetException
                     | NoSuchMethodException e
                 ) {
-                    throw new RuntimeException(e);
+                    logger.error("Failed to load callback: " + clazz.getName(), e);
                 }
             });
 
-        webView.show(true);
+        return webView;
+    }
+
+    public static DatabaseHandler getHandler() {
+        return handler;
     }
 
     public static WebView getWebView() {

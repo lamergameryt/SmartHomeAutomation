@@ -1,0 +1,155 @@
+package com.lamergameryt.fdwebview.mysql;
+
+import static com.lamergameryt.fdwebview.mysql.Models.*;
+
+import com.lamergameryt.fdwebview.MySQLConfig;
+import java.sql.*;
+import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class DatabaseHandler {
+
+    private final Logger logger = LoggerFactory.getLogger(DatabaseHandler.class);
+    private Connection conn;
+
+    public DatabaseHandler(MySQLConfig config) {
+        this(
+            config.getHost(),
+            config.getPort(),
+            config.getDatabase(),
+            config.getUsername(),
+            config.getPassword()
+        );
+    }
+
+    public DatabaseHandler(String host, int port, String database, String username, String password) {
+        try {
+            conn =
+                DriverManager.getConnection(
+                    "jdbc:mysql://" + host + ":" + port + "/" + database,
+                    username,
+                    password
+                );
+        } catch (SQLException e) {
+            logger.error("Invalid database details entered.", e);
+            System.exit(1);
+        }
+    }
+
+    public User getUserById(int id) {
+        try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM users WHERE id = ?")) {
+            ps.setInt(1, id);
+
+            ResultSet result = ps.executeQuery();
+            if (!result.next()) return null;
+
+            return new User(
+                result.getInt("id"),
+                result.getString("name"),
+                result.getInt("day"),
+                result.getInt("month"),
+                result.getInt("year")
+            );
+        } catch (SQLException e) {
+            logger.error("Unable to fetch user with the id " + id, e);
+        }
+
+        return null;
+    }
+
+    public ArrayList<Setting> getSettingsById(Location location, int userId) {
+        ArrayList<Setting> settings = new ArrayList<>();
+
+        //noinspection SqlSourceToSinkFlow,SqlResolve
+        try (
+            PreparedStatement ps = conn.prepareStatement(
+                "SELECT * FROM " + location.getType() + "settings WHERE user_id = ?"
+            )
+        ) {
+            ps.setInt(1, userId);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) settings.add(
+                new Setting(location, rs.getInt("user_id"), rs.getInt("pin_id"), rs.getInt("value"))
+            );
+        } catch (SQLException e) {
+            logger.error("Failed to fetch user settings from " + location.getType() + "settings", e);
+        }
+
+        return settings;
+    }
+
+    public Setting getSettingsById(Location location, int userId, int pinId) {
+        //noinspection SqlSourceToSinkFlow,SqlResolve
+        try (
+            PreparedStatement ps = conn.prepareStatement(
+                "SELECT * FROM " + location.getType() + "settings WHERE user_id = ? AND pin_id = ?"
+            )
+        ) {
+            ps.setInt(1, userId);
+            ps.setInt(2, pinId);
+
+            ResultSet rs = ps.executeQuery();
+            if (!rs.next()) return null;
+
+            return new Setting(location, rs.getInt("user_id"), rs.getInt("pin_id"), rs.getInt("value"));
+        } catch (SQLException e) {
+            logger.error("Failed to fetch user settings from " + location.getType() + "settings", e);
+        }
+
+        return null;
+    }
+
+    public Setting updateSettingValue(Location location, int userId, int pinId, int newValue) {
+        //noinspection SqlSourceToSinkFlow,SqlResolve
+        try (
+            PreparedStatement ps = conn.prepareStatement(
+                "UPDATE " + location.getType() + "settings SET value = ? WHERE user_id = ? AND pin_id = ?"
+            )
+        ) {
+            ps.setInt(1, newValue);
+            ps.setInt(2, userId);
+            ps.setInt(3, pinId);
+
+            ps.executeUpdate();
+            return new Setting(location, userId, pinId, newValue);
+        } catch (SQLException e) {
+            logger.error(
+                "Failed to update the " +
+                location.getType() +
+                "setting value for user " +
+                userId +
+                " at pin " +
+                pinId,
+                e
+            );
+        }
+
+        return null;
+    }
+
+    public enum Location {
+        KITCHEN("kitchen_"),
+        BEDROOM("bedroom_"),
+        HALL("hall_");
+
+        private final String type;
+
+        Location(String type) {
+            this.type = type;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public static Location getFromType(String type) {
+            for (Location typeEnum : Location.values()) {
+                if (typeEnum.name().equalsIgnoreCase(type)) return typeEnum;
+            }
+
+            return null;
+        }
+    }
+}

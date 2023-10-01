@@ -203,3 +203,4 @@ $RECYCLE.BIN/
 
 # Custom
 !lib/**/*.jar
+**/resources/*.json
