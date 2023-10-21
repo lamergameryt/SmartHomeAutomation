@@ -5,6 +5,7 @@ import static com.lamergameryt.fdwebview.mysql.Models.*;
 import com.lamergameryt.fdwebview.MySQLConfig;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +57,28 @@ public class DatabaseHandler {
         }
 
         return null;
+    }
+
+    public List<User> getAllUsers() {
+        ArrayList<User> users = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM users")) {
+            ResultSet result = ps.executeQuery();
+            while (result.next()) {
+                users.add(
+                    new User(
+                        result.getInt("id"),
+                        result.getString("name"),
+                        result.getInt("day"),
+                        result.getInt("month"),
+                        result.getInt("year")
+                    )
+                );
+            }
+        } catch (SQLException e) {
+            logger.error("Unable to fetch users", e);
+        }
+
+        return users;
     }
 
     public ArrayList<Setting> getSettingsById(Location location, int userId) {
@@ -140,16 +163,16 @@ public class DatabaseHandler {
             this.type = type;
         }
 
-        public String getType() {
-            return type;
-        }
-
         public static Location getFromType(String type) {
             for (Location typeEnum : Location.values()) {
                 if (typeEnum.name().equalsIgnoreCase(type)) return typeEnum;
             }
 
             return null;
+        }
+
+        public String getType() {
+            return type;
         }
     }
 }

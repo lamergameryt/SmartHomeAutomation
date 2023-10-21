@@ -1,8 +1,11 @@
 package com.lamergameryt.fdwebview.server;
 
+import com.lamergameryt.fdwebview.MainView;
 import fi.iki.elonen.NanoHTTPD;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class NanoServer extends NanoHTTPD {
 
@@ -12,7 +15,17 @@ public class NanoServer extends NanoHTTPD {
 
     @Override
     public Response serve(IHTTPSession session) {
-        InputStream stream = NanoServer.class.getResourceAsStream("/static/" + session.getUri().substring(1));
+        URL url;
+        try {
+            url = new URL(MainView.getBaseUrl() + session.getUri());
+        } catch (MalformedURLException e) {
+            return newFixedLengthResponse("Invalid request passed.");
+        }
+
+        String path = url.getPath();
+        if (path.endsWith("/")) path = path.substring(1, path.length() - 1); else path = path.substring(1);
+
+        InputStream stream = NanoServer.class.getResourceAsStream("/static/" + path);
         if (session.getUri().replaceAll("/", "").isEmpty() || stream == null) {
             return newFixedLengthResponse("Invalid file entered.");
         }
@@ -20,7 +33,7 @@ public class NanoServer extends NanoHTTPD {
         try {
             return newFixedLengthResponse(
                 Response.Status.OK,
-                getMimeTypeForFile(session.getUri().substring(1)),
+                getMimeTypeForFile(path),
                 stream,
                 stream.available()
             );

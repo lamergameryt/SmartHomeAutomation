@@ -1,6 +1,8 @@
 package com.lamergameryt.fdwebview.callbacks;
 
 import com.lamergameryt.fdwebview.MainView;
+import com.lamergameryt.fdwebview.mysql.Models;
+import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -13,20 +15,11 @@ public class LoadUsersCallback extends CustomCallback {
 
     @Override
     public void executeCallback(JSONArray args) {
-        // TODO: Get list of users from database.
-        String[] users = {
-            "Harsh Patil",
-            "Gaurav Hote",
-            "Nandini Gulhane",
-            "Siddhant Ghodke",
-            "Ishita Ramdasi",
-        };
-
-        int id = 1;
-        for (String user : users) {
+        List<Models.User> users = MainView.getHandler().getAllUsers();
+        for (Models.User user : users) {
             JSONObject object = new JSONObject();
-            object.put("name", user);
-            object.put("id", id++);
+            object.put("name", user.name());
+            object.put("id", user.id());
             MainView.getWebView().eval("addSetting(" + object + ");");
         }
     }

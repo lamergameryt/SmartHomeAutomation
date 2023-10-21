@@ -1,5 +1,7 @@
 package com.lamergameryt.fdwebview;
 
+import static com.lamergameryt.fdwebview.mysql.DatabaseHandler.Location;
+
 import ca.weblite.webview.WebView;
 import com.lamergameryt.fdwebview.callbacks.CustomCallback;
 import com.lamergameryt.fdwebview.mysql.DatabaseHandler;
@@ -33,7 +35,7 @@ public class MainView {
         handler = new DatabaseHandler(config);
 
         webView = setupWebview();
-        webView.show(false);
+        webView.show(true);
     }
 
     private static WebView setupWebview() {

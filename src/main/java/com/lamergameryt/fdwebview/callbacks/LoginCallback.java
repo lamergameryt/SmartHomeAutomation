@@ -12,6 +12,8 @@ public class LoginCallback extends CustomCallback {
 
     @Override
     public void executeCallback(JSONArray args) {
+        if (args.length() < 2) return;
+
         String username = args.getString(0);
         String password = args.getString(1);
 

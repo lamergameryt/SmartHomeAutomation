@@ -154,8 +154,8 @@
                 <li>
                     <div><img src="assets/img/fan.webp" alt="Fan" /></div>
                     <h4>Fan</h4>
-                    <label for="speed"></label>
-                    <input type="number" id="speed" name="speed" min="1" max="5" />
+                    <label for="fan"></label>
+                    <input type="number" id="fan" name="speed" min="1" max="5" />
                 </li>
                 <li>
                     <div><img src="assets/img/light_clip.webp" alt="Light" /></div>
@@ -183,19 +183,32 @@
             createToggleButton();
             loadTheme();
 
+            let queryDict = {};
+            location.search
+                .slice(1)
+                .split("&")
+                .forEach(function (item) {
+                    queryDict[item.split("=")[0]] = item.split("=")[1];
+                });
+
+            let userId = queryDict["user_id"] == null ? 1 : queryDict["user_id"];
             function saveSettings() {
-                let fanspeed = document.getElementById("speed").value;
+                let fan = document.getElementById("fan").value;
                 let light = document.getElementById("light").checked;
                 let speaker = document.getElementById("speaker").value;
 
                 let data = {
-                    fanspeed: fanspeed,
+                    userId: userId,
+                    fan: fan,
                     light: light,
                     speaker: speaker,
                 };
 
                 update_settings(data);
+                window.location = document.referrer;
             }
+
+            load_settings(userId);
         </script>
     </body>
 </html>
