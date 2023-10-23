@@ -7,7 +7,7 @@ You can use this project by referring to the [installation guide](#installation)
 
 This project depends on a few prerequisites for the execution of the project.
 
-This project uses the following tools. Make sure the following dependencies are installed and configured:
+The project uses the following tools. Make sure these dependencies are installed and configured:
 
 - Java (OpenJDK 17.0.8)
 - Maven (3.9.4)

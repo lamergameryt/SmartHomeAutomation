@@ -2,11 +2,20 @@ package com.lamergameryt.fdwebview;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.JarURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
+/**
+ * Adapted from <a href="https://stackoverflow.com/a/22462785">StackOverFlow</a>
+ * Returns all classes present in the specified packageName as an ArrayList.
+ */
 public class Reflections {
 
     private final String packageName;
@@ -15,57 +24,78 @@ public class Reflections {
         this.packageName = packageName;
     }
 
-    public ArrayList<Class<?>> getClasses() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        assert classLoader != null;
+    private void checkDirectory(File directory, String packageName, ArrayList<Class<?>> classes)
+        throws ClassNotFoundException {
+        File tmpDirectory;
 
-        String path = this.packageName.replace('.', '/');
-        Enumeration<URL> resources;
-        try {
-            resources = classLoader.getResources(path);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        if (directory.exists() && directory.isDirectory()) {
+            String[] files = directory.list();
 
-        List<File> dirs = new ArrayList<>();
-
-        while (resources.hasMoreElements()) {
-            URL resource = resources.nextElement();
-            dirs.add(new File(resource.getFile()));
-        }
-
-        ArrayList<Class<?>> classes = new ArrayList<>();
-        for (File directory : dirs) {
-            try {
-                classes.addAll(findClasses(directory, this.packageName));
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+            assert files != null;
+            for (String file : files) {
+                if (file.endsWith(".class")) {
+                    try {
+                        classes.add(Class.forName(packageName + '.' + file.substring(0, file.length() - 6)));
+                    } catch (NoClassDefFoundError e) {
+                        // do nothing. this class hasn't been found by the
+                        // loader, and we don't care.
+                    }
+                } else if ((tmpDirectory = new File(directory, file)).isDirectory()) {
+                    checkDirectory(tmpDirectory, packageName + "." + file, classes);
+                }
             }
         }
-
-        return classes;
     }
 
-    public List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
-        List<Class<?>> classes = new ArrayList<>();
-        if (!directory.exists()) {
-            return classes;
-        }
+    private void checkJarFile(JarURLConnection connection, ArrayList<Class<?>> classes)
+        throws ClassNotFoundException, IOException {
+        JarFile jarFile = connection.getJarFile();
+        Enumeration<JarEntry> entries = jarFile.entries();
+        String name;
 
-        File[] files = directory.listFiles();
-        assert files != null;
+        for (JarEntry jarEntry; entries.hasMoreElements() && ((jarEntry = entries.nextElement()) != null);) {
+            name = jarEntry.getName();
 
-        for (File file : files) {
-            if (file.isDirectory()) {
-                assert !file.getName().contains(".");
-                classes.addAll(findClasses(file, packageName + '.' + file.getName()));
-            } else if (file.getName().endsWith(".class")) {
-                classes.add(
-                    Class.forName(
-                        packageName + '.' + file.getName().substring(0, file.getName().length() - 6)
-                    )
-                );
+            if (name.contains(".class")) {
+                name = name.substring(0, name.length() - 6).replace('/', '.');
+
+                if (name.contains(packageName)) {
+                    classes.add(Class.forName(name));
+                }
             }
+        }
+    }
+
+    public ArrayList<Class<?>> getClassesForPackage() {
+        ArrayList<Class<?>> classes = new ArrayList<>();
+
+        try {
+            ClassLoader cld = Thread.currentThread().getContextClassLoader();
+
+            if (cld == null) return classes;
+
+            Enumeration<URL> resources = cld.getResources(packageName.replace('.', '/'));
+            URLConnection connection;
+
+            for (URL url; resources.hasMoreElements() && ((url = resources.nextElement()) != null);) {
+                try {
+                    connection = url.openConnection();
+
+                    if (connection instanceof JarURLConnection) {
+                        checkJarFile((JarURLConnection) connection, classes);
+                    } else if ("file".equals(url.getProtocol())) {
+                        checkDirectory(
+                            new File(URLDecoder.decode(url.getPath(), StandardCharsets.UTF_8)),
+                            packageName,
+                            classes
+                        );
+                    } else return classes;
+                } catch (IOException | ClassNotFoundException ioex) {
+                    return classes;
+                }
+            }
+        } catch (NullPointerException | IOException ex) {
+            return classes;
         }
 
         return classes;

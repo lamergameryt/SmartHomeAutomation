@@ -45,7 +45,7 @@ public class MainView {
 
         Reflections reflections = new Reflections("com.lamergameryt.fdwebview.callbacks");
         reflections
-            .getClasses()
+            .getClassesForPackage()
             .forEach(clazz -> {
                 if (!clazz.getSuperclass().equals(CustomCallback.class)) return;
                 try {

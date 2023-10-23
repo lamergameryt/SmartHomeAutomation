@@ -121,9 +121,11 @@ public class DatabaseHandler {
             ps.setInt(1, userId);
 
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) settings.add(
-                new Setting(location, rs.getInt("user_id"), rs.getInt("pin_id"), rs.getInt("value"))
-            );
+            while (rs.next()) {
+                settings.add(
+                    new Setting(location, rs.getInt("user_id"), rs.getInt("pin_id"), rs.getInt("value"))
+                );
+            }
         } catch (SQLException e) {
             logger.error("Failed to fetch user settings from " + location.getType() + "settings", e);
         }
