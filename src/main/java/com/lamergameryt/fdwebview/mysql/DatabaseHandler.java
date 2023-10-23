@@ -1,9 +1,11 @@
 package com.lamergameryt.fdwebview.mysql;
 
-import static com.lamergameryt.fdwebview.mysql.Models.*;
+import static com.lamergameryt.fdwebview.mysql.Models.Setting;
+import static com.lamergameryt.fdwebview.mysql.Models.User;
 
 import com.lamergameryt.fdwebview.MySQLConfig;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ public class DatabaseHandler {
                     username,
                     password
                 );
+            conn.setAutoCommit(false);
         } catch (SQLException e) {
             logger.error("Invalid database details entered.", e);
             System.exit(1);
@@ -54,6 +57,52 @@ public class DatabaseHandler {
             );
         } catch (SQLException e) {
             logger.error("Unable to fetch user with the id " + id, e);
+        }
+
+        return null;
+    }
+
+    public User createNewUser(String name, LocalDate dob, byte[] encoding) {
+        int year = dob.getYear();
+        int month = dob.getMonthValue();
+        int day = dob.getDayOfMonth();
+
+        String insertIntoUsers = "INSERT INTO users(name, day, month, year) VALUES(?, ?, ?, ?)";
+        String insertIntoParams = "INSERT INTO parameters VALUES (?, ?)";
+        try (
+            PreparedStatement psUsers = conn.prepareStatement(
+                insertIntoUsers,
+                Statement.RETURN_GENERATED_KEYS
+            );
+            PreparedStatement psParams = conn.prepareStatement(insertIntoParams)
+        ) {
+            psUsers.setString(1, name);
+            psUsers.setInt(2, day);
+            psUsers.setInt(3, month);
+            psUsers.setInt(4, year);
+
+            int rows = psUsers.executeUpdate();
+            if (rows == 0) {
+                throw new SQLException("Creating user failed, no rows affected.");
+            }
+
+            int id;
+            try (ResultSet keys = psUsers.getGeneratedKeys()) {
+                if (keys.next()) {
+                    id = keys.getInt(1);
+                } else {
+                    throw new SQLException("Creating user failed, no ID found.");
+                }
+            }
+
+            psParams.setInt(1, id);
+            psParams.setBytes(2, encoding);
+
+            psParams.execute();
+            conn.commit();
+            return new User(id, name, day, month, year);
+        } catch (SQLException e) {
+            logger.error("Could not create new user \"" + name + "\" in the database.", e);
         }
 
         return null;
@@ -136,6 +185,7 @@ public class DatabaseHandler {
             ps.setInt(3, pinId);
 
             ps.executeUpdate();
+            conn.commit();
             return new Setting(location, userId, pinId, newValue);
         } catch (SQLException e) {
             logger.error(

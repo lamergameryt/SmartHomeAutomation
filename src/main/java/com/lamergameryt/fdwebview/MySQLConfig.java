@@ -2,9 +2,6 @@ package com.lamergameryt.fdwebview;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -27,7 +24,7 @@ public class MySQLConfig {
                 "The configuration file for MySQLConfig was not found."
             );
 
-            JSONObject config = new JSONObject(streamToString(stream));
+            JSONObject config = new JSONObject(Statics.streamToString(stream));
 
             this.host = config.getString("host");
             this.port = config.getInt("port");
@@ -44,18 +41,6 @@ public class MySQLConfig {
             logger.error("Error loading the mysql.json config file.", e);
             System.exit(1);
         }
-    }
-
-    // https://stackoverflow.com/a/35446009
-    private String streamToString(InputStream stream) throws IOException {
-        int bufferSize = 1024;
-        char[] buffer = new char[bufferSize];
-        StringBuilder out = new StringBuilder();
-        Reader in = new InputStreamReader(stream, StandardCharsets.UTF_8);
-        for (int numRead; (numRead = in.read(buffer, 0, buffer.length)) > 0;) {
-            out.append(buffer, 0, numRead);
-        }
-        return out.toString();
     }
 
     public String getHost() {
