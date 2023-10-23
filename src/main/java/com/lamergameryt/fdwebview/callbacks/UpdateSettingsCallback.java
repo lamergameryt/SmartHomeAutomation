@@ -3,6 +3,7 @@ package com.lamergameryt.fdwebview.callbacks;
 import com.lamergameryt.fdwebview.MainView;
 import com.lamergameryt.fdwebview.Statics;
 import com.lamergameryt.fdwebview.mysql.Models;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -24,6 +25,12 @@ public class UpdateSettingsCallback extends CustomCallback {
     public void executeCallback(JSONArray args) {
         JSONObject settings = args.getJSONObject(0);
         int userId = settings.getInt("userId");
+        List<Integer> userSettings = MainView
+            .getHandler()
+            .getSettingsById(Statics.GLOBAL_LOCATION, userId)
+            .stream()
+            .map(Models.Setting::pinId)
+            .toList();
 
         for (String device : settings.keySet()) {
             Optional<Integer> pinId = Statics.PIN_MAPPINGS
@@ -45,9 +52,18 @@ public class UpdateSettingsCallback extends CustomCallback {
                 integerValue = Integer.parseInt((String) value);
             }
 
-            Models.Setting updatedSetting = MainView
-                .getHandler()
-                .updateSettingValue(Statics.GLOBAL_LOCATION, userId, pinId.get(), integerValue);
+            Models.Setting updatedSetting;
+            if (userSettings.contains(pinId.get())) {
+                updatedSetting =
+                    MainView
+                        .getHandler()
+                        .updateSetting(Statics.GLOBAL_LOCATION, userId, pinId.get(), integerValue);
+            } else {
+                updatedSetting =
+                    MainView
+                        .getHandler()
+                        .createSetting(Statics.GLOBAL_LOCATION, userId, pinId.get(), integerValue);
+            }
 
             if (updatedSetting == null) {
                 logger.error("Failed to update setting of device \"" + device + "\" for user id " + userId);

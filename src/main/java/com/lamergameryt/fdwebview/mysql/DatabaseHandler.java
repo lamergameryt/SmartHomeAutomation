@@ -41,27 +41,6 @@ public class DatabaseHandler {
         }
     }
 
-    public User getUserById(int id) {
-        try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM users WHERE id = ?")) {
-            ps.setInt(1, id);
-
-            ResultSet result = ps.executeQuery();
-            if (!result.next()) return null;
-
-            return new User(
-                result.getInt("id"),
-                result.getString("name"),
-                result.getInt("day"),
-                result.getInt("month"),
-                result.getInt("year")
-            );
-        } catch (SQLException e) {
-            logger.error("Unable to fetch user with the id " + id, e);
-        }
-
-        return null;
-    }
-
     public User createNewUser(String name, LocalDate dob, byte[] encoding) {
         int year = dob.getYear();
         int month = dob.getMonthValue();
@@ -152,28 +131,36 @@ public class DatabaseHandler {
         return settings;
     }
 
-    public Setting getSettingsById(Location location, int userId, int pinId) {
+    public Setting createSetting(Location location, int userId, int pinId, int value) {
         //noinspection SqlSourceToSinkFlow,SqlResolve
         try (
             PreparedStatement ps = conn.prepareStatement(
-                "SELECT * FROM " + location.getType() + "settings WHERE user_id = ? AND pin_id = ?"
+                "INSERT INTO " + location.getType() + "settings VALUES(?, ?, ?)"
             )
         ) {
             ps.setInt(1, userId);
             ps.setInt(2, pinId);
+            ps.setInt(3, value);
 
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next()) return null;
-
-            return new Setting(location, rs.getInt("user_id"), rs.getInt("pin_id"), rs.getInt("value"));
+            ps.execute();
+            conn.commit();
+            return new Setting(location, userId, pinId, value);
         } catch (SQLException e) {
-            logger.error("Failed to fetch user settings from " + location.getType() + "settings", e);
+            logger.error(
+                "Failed to insert the " +
+                location.getType() +
+                "setting value for user " +
+                userId +
+                " at pin " +
+                pinId,
+                e
+            );
         }
 
         return null;
     }
 
-    public Setting updateSettingValue(Location location, int userId, int pinId, int newValue) {
+    public Setting updateSetting(Location location, int userId, int pinId, int newValue) {
         //noinspection SqlSourceToSinkFlow,SqlResolve
         try (
             PreparedStatement ps = conn.prepareStatement(
@@ -213,6 +200,7 @@ public class DatabaseHandler {
             this.type = type;
         }
 
+        @SuppressWarnings("unused")
         public static Location getFromType(String type) {
             for (Location typeEnum : Location.values()) {
                 if (typeEnum.name().equalsIgnoreCase(type)) return typeEnum;
