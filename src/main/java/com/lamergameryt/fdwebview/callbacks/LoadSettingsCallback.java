@@ -35,10 +35,11 @@ public class LoadSettingsCallback extends CustomCallback {
         String code =
             """
                 var elem = document.getElementById(''{0}'');
+                var offset = parseInt(elem.getAttribute(''offset''));
                 if ((elem || '{}').type === ''checkbox'')
-                    elem.checked = {1} != 0;
+                    elem.checked = Math.floor({1}/offset) != 0;
                 else
-                    elem.value = ''{1}'';
+                    elem.value = Math.floor({1}/offset).toString();
                 """.strip();
 
         MainView.getWebView().eval(MessageFormat.format(code, elementId, value));

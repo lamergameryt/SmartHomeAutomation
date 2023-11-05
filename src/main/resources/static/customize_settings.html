@@ -156,13 +156,13 @@
                     <div><img src="assets/img/fan.webp" alt="Fan" /></div>
                     <h4>Fan</h4>
                     <label for="fan"></label>
-                    <input type="number" id="fan" name="speed" min="1" max="5" />
+                    <input type="number" id="fan" name="speed" min="1" max="5" offset="204" />
                 </li>
                 <li>
                     <div><img src="assets/img/light_clip.webp" alt="Light" /></div>
                     <h4>Light</h4>
                     <label class="switch">
-                        <input id="light" type="checkbox" />
+                        <input id="light" type="checkbox" offset="1023" />
                         <span class="slider"></span>
                     </label>
                 </li>
@@ -170,7 +170,7 @@
                     <div><img src="assets/img/speaker.webp" alt="Speaker" /></div>
                     <h4>Speaker</h4>
                     <label>
-                        <input id="speaker" type="range" min="0" max="100" />
+                        <input id="speaker" type="range" min="0" max="100" offset="10" />
                     </label>
                 </li>
             </ul>
@@ -194,15 +194,15 @@
 
             let userId = queryDict["user_id"] == null ? 1 : queryDict["user_id"];
             function saveSettings() {
-                let fan = document.getElementById("fan").value;
-                let light = document.getElementById("light").checked;
-                let speaker = document.getElementById("speaker").value;
+                let fan = document.getElementById("fan");
+                let light = document.getElementById("light");
+                let speaker = document.getElementById("speaker");
 
                 let data = {
                     userId: userId,
-                    fan: fan,
-                    light: light,
-                    speaker: speaker,
+                    fan: [fan.value, parseInt(fan.getAttribute("offset"))],
+                    light: [light.checked, parseInt(light.getAttribute("offset"))],
+                    speaker: [speaker.value, parseInt(speaker.getAttribute("offset"))],
                 };
 
                 update_settings(data);

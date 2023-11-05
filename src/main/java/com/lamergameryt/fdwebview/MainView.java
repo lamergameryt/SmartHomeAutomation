@@ -33,7 +33,7 @@ public class MainView {
         handler = new DatabaseHandler(config);
 
         webView = setupWebview();
-        webView.show(true);
+        webView.show(false);
     }
 
     private static WebView setupWebview() {

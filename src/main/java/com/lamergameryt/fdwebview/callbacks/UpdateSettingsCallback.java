@@ -42,7 +42,8 @@ public class UpdateSettingsCallback extends CustomCallback {
 
             if (pinId.isEmpty()) return;
 
-            Object value = settings.get(device);
+            JSONArray deviceSetting = settings.getJSONArray(device);
+            Object value = deviceSetting.get(0);
             int integerValue;
             if (value instanceof Boolean) {
                 integerValue = ((Boolean) value) ? 1 : 0;
@@ -51,6 +52,9 @@ public class UpdateSettingsCallback extends CustomCallback {
             } else {
                 integerValue = Integer.parseInt((String) value);
             }
+
+            // Multiply value with the PWM offset.
+            integerValue *= deviceSetting.getInt(1);
 
             Models.Setting updatedSetting;
             if (userSettings.contains(pinId.get())) {
