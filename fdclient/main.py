@@ -10,8 +10,9 @@ video_capture = cv2.VideoCapture(0)
 client = SQLClient()
 node_client = NodeClient()
 
-known_face_encodings, known_face_names = client.get_face_encodings()
+known_face_encodings, face_priorities = client.get_face_encodings()
 
+known_face_names = list(face_priorities.keys())
 face_locations = []
 face_encodings = []
 face_names = []
@@ -38,13 +39,6 @@ while True:
 
             face_names.append(name)
 
-        if len(face_names) != 0 and (settings := client.get_user_settings(face_names[0])) != None:
-            for setting in settings:
-                node_client.update_pin(setting, settings[setting])
-        else:
-            for setting in node_client.values_cache:
-                node_client.update_pin(setting, 0)
-
     process_this_frame = not process_this_frame
     for (top, right, bottom, left), name in zip(face_locations, face_names):
         top *= 4
@@ -59,6 +53,22 @@ while True:
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
     cv2.imshow("Video", frame)
+
+
+    max_priority = (-9999, "Unknown")
+    if "Unknown" in face_names:
+        face_names.remove("Unknown")
+
+    for face_name in face_names:
+        if face_priorities[face_name] > max_priority[0]:
+            max_priority = (face_priorities[face_name], face_name)
+
+    if (settings := client.get_user_settings(max_priority[1])) != None:
+        for setting in settings:
+            node_client.update_pin(setting, settings[setting])
+    else:
+        for setting in node_client.values_cache:
+            node_client.update_pin(setting, 0)
 
     if cv2.waitKey(1) & 0xFF == ord("q"):
         for setting in node_client.values_cache:

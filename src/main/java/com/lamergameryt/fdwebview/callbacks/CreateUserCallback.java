@@ -33,6 +33,11 @@ public class CreateUserCallback extends CustomCallback {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate dob = LocalDate.parse(dobAsStr, formatter);
 
+        if (dob.isAfter(LocalDate.now())) {
+            MainView.getWebView().eval("invalidInput(\"Please select a valid date of birth.\");");
+            return;
+        }
+
         File file = parseImage(encodedImage);
         if (file == null) return;
 
@@ -48,6 +53,8 @@ public class CreateUserCallback extends CustomCallback {
         if (user == null) {
             logger.error("Failed to create new user " + name);
         }
+
+        MainView.getWebView().eval("showSuccess();");
     }
 
     private File parseImage(String encodedImage) {

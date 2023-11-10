@@ -17,7 +17,6 @@ public class LoginCallback extends CustomCallback {
         String username = args.getString(0);
         String password = args.getString(1);
 
-        // TODO: Manage authentication with database connectivity.
         if (username.equals("admin") && password.equals("password")) {
             MainView.getWebView().url(MainView.getBaseUrl() + "/settings_page.html");
         } else {

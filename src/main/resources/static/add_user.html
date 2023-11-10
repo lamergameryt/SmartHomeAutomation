@@ -153,6 +153,21 @@
                     reader.onerror = reject;
                 });
 
+            function invalidInput(message) {
+                swal({ title: "Operation Failed", text: message, icon: "error" }).then(() => {
+                    window.location = document.referrer;
+                });
+            }
+
+            function showSuccess() {
+                swal({
+                    title: "Operation Succesful",
+                    text: "Created new user " + name + " successfully.",
+                }).then(() => {
+                    window.location = document.referrer;
+                });
+            }
+
             let button = document.getElementById("submit_btn");
             async function addUserToDatabase() {
                 button.disabled = true;
@@ -163,21 +178,9 @@
                 try {
                     let fileAsBase64 = await toBase64(file);
                     create_user(name, dob, fileAsBase64);
-                    swal({
-                        title: "Operation Succesful",
-                        text: "Created new user " + name + " successfully.",
-                    }).then(() => {
-                        window.location = document.referrer;
-                    });
                     button.disabled = false;
                 } catch (error) {
-                    swal({
-                        title: "Operation Failed",
-                        text: "Could not load the user photo. Try providing another photo (jpg/png).",
-                        icon: "error",
-                    }).then(() => {
-                        window.location = document.referrer;
-                    });
+                    invalidInput("Could not load the user photo. Try providing another photo (jpg/png).");
                 }
             }
         </script>

@@ -42,7 +42,7 @@ class SQLClient:
 
     def get_face_encodings(self):
         face_encodings = []
-        face_names = []
+        face_names = {}
 
         with self.connection.cursor() as cursor:
             cursor.execute(f"SELECT * FROM user_parameters")
@@ -50,6 +50,6 @@ class SQLClient:
 
             for encoding in encodings:
                 face_encodings.append(np.frombuffer(encoding["encoding"], dtype=np.float64))
-                face_names.append(encoding["name"])
+                face_names[encoding["name"]] = encoding["priority"]
 
         return face_encodings, face_names
